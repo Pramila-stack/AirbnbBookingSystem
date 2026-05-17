@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Styling to mimic the Airbnb screenshot */
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        background-color: #f7f7f7; /* Light background */
+    }
+
+    .login-card {
+        background: #fff;
+        width: 100%;
+        max-width: 568px;
+        border-radius: 12px;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+        padding: 24px;
+        border: 1px solid #ebebeb;
+    }
+
+    .login-header {
+        text-align: center;
+        font-size: 18px;
+        font-weight: 700;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #ebebeb;
+    }
+
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #b0b0b0;
+        margin-bottom: 15px;
+    }
+
+    .btn-airbnb {
+        width: 100%;
+        padding: 14px;
+        background-color: #FF385C; /* Airbnb brand color */
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: opacity 0.2s;
+    }
+
+    .btn-airbnb:hover {
+        opacity: 0.9;
+        color: white;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 20px 0;
+        color: #717171;
+        font-size: 12px;
+    }
+
+    .divider::before, .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .divider:not(:empty)::before { margin-right: .5em; }
+    .divider:not(:empty)::after { margin-left: .5em; }
+
+    .error-text {
+        color: #c13511;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">Log in or sign up</div>
+
+        {% if form.non_field_errors %}
+            <div class="error-text text-center">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <form action="" method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                {% if form.username.errors %}
+                    <div class="error-text">{{ form.username.errors }}</div>
+                {% endif %}
+                <input type="text" name="username" id="username" 
+                       class="form-control" placeholder="Username"
+                       value="{{ form.username.value|default_if_none:'' }}">
+            </div>
+
+            <div class="mb-3">
+                {% if form.password.errors %}
+                    <div class="error-text">{{ form.password.errors }}</div>
+                {% endif %}
+                <input type="password" name="password" id="password" 
+                       class="form-control" placeholder="Password"
+                       value="{{ form.password.value|default_if_none:'' }}">
+            </div>
+
+            <button type="submit" class="btn btn-airbnb">Continue</button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <p class="text-center mb-0">
+            No account yet? <a href="{% url 'signup' %}" style="color: #222; font-weight: 600;">Signup</a>
+        </p>
+    </div>
+</div>
+{% endblock content %}

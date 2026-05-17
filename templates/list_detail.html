@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- 1. YOUR ORIGINAL CODE (Keep as is) -->
+<div class="row">
+    <div class="col-md-6">
+        {% if listing.images.all %}
+            <a href="{% url 'listing_gallery' listing.id %}" target="_blank">
+                <img src="{{ listing.images.first.image.url }}" alt="Main Image" class="img-fluid rounded border shadow-sm">
+                <p class="text-muted mt-2">Click image to view all photos</p>
+            </a>
+        {% else %}
+            <div class="p-5 bg-light text-center border rounded">No images available</div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-6">
+        <h1 class="fw-bold">{{ listing.title }}</h1>
+        <p class="text-secondary">{{ listing.city }}, {{ listing.country }}</p>
+        <h3 class="text-success">${{ listing.price_per_night }} / night</h3>
+        <hr>
+        <p>{{ listing.description }}</p>
+
+        <h5 class="mt-4">What this place offers:</h5>
+        <ul>
+            {% for amenity in listing.amenities.all %}
+                <li>{{ amenity.name }}</li>
+            {% empty %}
+                <li>No amenities listed</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<hr class="my-5">
+
+<!-- 2. NEW ADDITIONS: BOOKING (LEFT) & REVIEWS (RIGHT) -->
+<div class="row">
+    
+    <!-- BOTTOM LEFT: Booking Form -->
+    <div class="col-md-5">
+        <div class="card shadow-sm p-4 border-0 bg-light">
+            <h4 class="fw-bold mb-3">Reserve This Place</h4>
+            <form method="POST" action="{% url 'create-reservation' listing.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Check-in Date</label>
+                    <input type="date" name="check_in" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Check-out Date</label>
+                    <input type="date" name="check_out" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Confirm Booking</button>
+            </form>
+            <p class="text-center text-muted small mt-3">Total price calculated at checkout</p>
+        </div>
+    </div>
+
+    <!-- BOTTOM RIGHT: Reviews -->
+    <div class="col-md-6 offset-md-1">
+        <h4 class="fw-bold mb-4">Guest Reviews</h4>
+        
+        <!-- Loop through reservations to find associated reviews -->
+        {% for reservation in listing.reservations.all %}
+            {% if reservation.review %}
+                <div class="mb-4 pb-3 border-bottom">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="fw-bold me-2">{{ reservation.guest.username }}</div>
+                        <div class="text-warning small">
+                            <!-- Simple rating display -->
+                            Rating: {{ reservation.review.rating }}/5
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-1">{{ reservation.review.created_at|date:"M d, Y" }}</p>
+                    <p class="mb-0">{{ reservation.review.comment }}</p>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p class="text-muted italic">No reviews yet. Be the first to stay!</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock content %}

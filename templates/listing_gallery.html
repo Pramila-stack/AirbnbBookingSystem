@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Photos of {{ listing.title }}</h1>
+    <hr>
+
+    <!-- 1. NAVIGATION ROW: Clickable room names -->
+    <div class="row mb-5 text-center">
+        {% regroup listing.images.all by get_room_type_display as room_list %}
+        {% for room in room_list %}
+            <div class="col">
+                <a href="#{{ room.grouper|slugify }}" class="text-decoration-none fw-bold text-dark">
+                    <!-- Showing a small thumbnail or just the text -->
+                    <div class="p-3 border rounded bg-light">
+                        {{ room.grouper }}
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- 2. GALLERY SECTIONS -->
+    {% for room in room_list %}
+        <!-- We add an ID here that matches the link above -->
+        <h3 id="{{ room.grouper|slugify }}" class="mt-5 text-primary">{{ room.grouper }}</h3>
+        <div class="row">
+            {% for item in room.list %}
+                <div class="col-md-4 mb-4">
+                    <img src="{{ item.image.url }}" class="img-fluid rounded shadow-sm border">
+                </div>
+            {% endfor %}
+        </div>
+        <p><a href="#" class="text-muted small">↑ Back to top</a></p>
+    {% endfor %}
+</div>
+{% endblock %}
