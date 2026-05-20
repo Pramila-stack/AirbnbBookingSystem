@@ -82,5 +82,10 @@
     </div>
 
 </div>
+{% if user == listing.host  %}
+<a href="{% url 'listing-delete' listing.pk %}">Delete</a>
+<a href="{% url 'listing-update' listing.pk %}">Update</a>
+{% endif %}
+
 
 {% endblock content %}

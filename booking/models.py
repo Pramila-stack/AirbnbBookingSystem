@@ -93,3 +93,37 @@ class Message(models.Model):
     sender = models.ForeignKey(User,on_delete=models.CASCADE)
     text = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlists")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="wishlisted_by")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Prevents a user from adding the same listing to their wishlist multiple times
+        unique_together = ('user', 'listing')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.listing.title}"
+    
+class Wishlist(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="wishlists"
+    )
+
+    listing = models.ForeignKey(
+        Listing,
+        on_delete=models.CASCADE,
+        related_name="wishlisted_by"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "listing")
+
+    def __str__(self):
+        return f"{self.user.username} saved {self.listing.title}"

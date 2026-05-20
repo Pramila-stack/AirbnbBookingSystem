@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">Become a Host</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <!-- Listing Information -->
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            {{ form.title }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            {{ form.description }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            {{ form.category }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">City</label>
+            {{ form.city }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Country</label>
+            {{ form.country }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price Per Night</label>
+            {{ form.price_per_night }}
+        </div>
+
+        <hr>
+
+        <!-- Living Room Images -->
+
+        <div class="mb-4">
+            <h4>Living Room Images</h4>
+
+            {{ form.livingroom_images }}
+
+            <small class="text-muted d-block mt-2">
+                Hold Ctrl (Windows) or Cmd (Mac) to select multiple living room photos.
+            </small>
+        </div>
+
+        <!-- Kitchen Images -->
+
+        <div class="mb-4">
+            <h4>Kitchen Images</h4>
+
+            {{ form.kitchen_images }}
+
+            <small class="text-muted d-block mt-2">
+                Hold Ctrl (Windows) or Cmd (Mac) to select multiple kitchen photos.
+            </small>
+        </div>
+
+        <!-- Bedroom Images -->
+
+        <div class="mb-4">
+            <h4>Bedroom Images</h4>
+
+            {{ form.bedroom_images }}
+
+            <small class="text-muted d-block mt-2">
+                Hold Ctrl (Windows) or Cmd (Mac) to select multiple bedroom photos.
+            </small>
+        </div>
+
+        <!-- Bathroom Images -->
+
+        <div class="mb-4">
+            <h4>Bathroom Images</h4>
+
+            {{ form.bathroom_images }}
+
+            <small class="text-muted d-block mt-2">
+                Hold Ctrl (Windows) or Cmd (Mac) to select multiple bathroom photos.
+            </small>
+        </div>
+
+        <!-- Exterior Images -->
+
+        <div class="mb-4">
+            <h4>Exterior Images</h4>
+
+            {{ form.exterior_images }}
+
+            <small class="text-muted d-block mt-2">
+                Hold Ctrl (Windows) or Cmd (Mac) to select multiple exterior photos.
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create Listing
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

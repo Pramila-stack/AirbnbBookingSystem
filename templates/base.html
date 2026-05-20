@@ -15,6 +15,14 @@
             <a class="navbar-brand" href="/">Stay Ease</a>
             {% if user.is_authenticated %}
             Welcome  {{ user.username }}
+            {% if user.is_host %}
+            <a href="{% url 'become-host' %}">Create New Listing</a>
+            {% else %}
+            <a href="{% url 'become-host' %}">Become a host</a>
+
+            <a href="{% url 'wishlist' %}">My Wishlist ❤️</a>
+
+            {% endif %}
             <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-secondary">Logout</button>

@@ -16,14 +16,14 @@
         border: 1px solid #dddddd;
         border-radius: 40px;
         padding: 8px 8px 8px 24px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
         transition: box-shadow 0.2s ease;
         width: 100%;
         max-width: 500px;
     }
 
     .search-form:hover {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
     }
 
     .search-input {
@@ -71,7 +71,7 @@
     .img-container {
         position: relative;
         width: 100%;
-        padding-top: 100%; 
+        padding-top: 100%;
         overflow: hidden;
         border-radius: 12px;
     }
@@ -96,7 +96,7 @@
         border-radius: 15px;
         font-size: 0.75rem;
         font-weight: 600;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         z-index: 2;
     }
 
@@ -120,7 +120,8 @@
     .wishlist-icon {
         height: 24px;
         width: 24px;
-        fill: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+        fill: rgba(0, 0, 0, 0.5);
+        /* Semi-transparent black */
         stroke: white;
         stroke-width: 2;
         overflow: visible;
@@ -157,15 +158,18 @@
 <!-- Enhanced Search Section -->
 <div class="search-outer-container">
     <form action="" method="get" class="search-form">
-        <input 
-            type="text" 
-            name="q" 
-            class="search-input" 
-            placeholder="Search by title, city or location" 
-            value="{{ request.GET.q }}"
-        >
+        <input type="text" name="q" class="search-input" placeholder="Search by title, city or location"
+            value="{{ request.GET.q }}">
         <button type="submit" class="search-button">
-            <svg viewBox="0 0 32 32" style="display:block;fill:none;height:12px;width:12px;stroke:currentColor;stroke-width:5.333333333333333;overflow:visible" aria-hidden="true" role="presentation" focusable="false"><g fill="none"><path d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"></path></g></svg>
+            <svg viewBox="0 0 32 32"
+                style="display:block;fill:none;height:12px;width:12px;stroke:currentColor;stroke-width:5.333333333333333;overflow:visible"
+                aria-hidden="true" role="presentation" focusable="false">
+                <g fill="none">
+                    <path
+                        d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9">
+                    </path>
+                </g>
+            </svg>
         </button>
     </form>
 </div>
@@ -178,18 +182,26 @@
             <div class="img-container">
                 <a href="{% url 'list-detail' listing.pk %}">
                     {% if listing.images.first.image.url %}
-                        <img src="{{ listing.images.first.image.url }}" class="listing-img" alt="{{ listing.title }}">
+                    <img src="{{ listing.images.first.image.url }}" class="listing-img" alt="{{ listing.title }}">
                     {% endif %}
                 </a>
-                
+
                 <span class="badge-guest-favorite">Guest favorite</span>
 
                 <!-- Wishlist Button -->
-                <button type="button" class="wishlist-btn" aria-label="Add to wishlist">
-                    <svg class="wishlist-icon" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false">
-                        <path d="M16 28c7-4.73 14-10 14-17a6.91 6.91 0 0 0-7-7c-3.75 0-6.26 2.73-7 3.73-1.01-1.31-3.54-3.73-7-3.73a6.91 6.91 0 0 0-7 7c0 7 7 12.27 14 17z"></path>
-                    </svg>
-                </button>
+                <!-- Wishlist Button -->
+                <form method="post" action="{% url 'add-to-wishlist' listing.id %}">
+                    {% csrf_token %}
+
+                    <button type="submit" class="wishlist-btn" aria-label="Add to wishlist">
+                        <svg class="wishlist-icon" viewBox="0 0 32 32">
+                            <path
+                                d="M16 28c7-4.73 14-10 14-17a6.91 6.91 0 0 0-7-7c-3.75 0-6.26 2.73-7 3.73-1.01-1.31-3.54-3.73-7-3.73a6.91 6.91 0 0 0-7 7c0 7 7 12.27 14 17z">
+                            </path>
+                        </svg>
+                    </button>
+                </form>
+
             </div>
 
             <a href="{% url 'list-detail' listing.pk %}" style="text-decoration: none; color: inherit;">
