@@ -2,35 +2,43 @@
 
 {% block content %}
 <style>
-    /* Search Form Styling */
+    /* --- Global Elements & Reset --- */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        color: #222222;
+        background-color: #ffffff;
+    }
+
+    /* --- Airbnb Signature Floating Search Bar --- */
     .search-outer-container {
         display: flex;
         justify-content: center;
-        padding: 20px 0 40px 0;
+        padding: 30px 0 50px 0;
     }
 
     .search-form {
         display: flex;
         align-items: center;
         background: #ffffff;
-        border: 1px solid #dddddd;
+        border: 1px solid #e7e7e7;
         border-radius: 40px;
         padding: 8px 8px 8px 24px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: box-shadow 0.2s ease;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
         width: 100%;
-        max-width: 500px;
+        max-width: 460px;
     }
 
     .search-form:hover {
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        border-color: #e2e2e2;
     }
 
     .search-input {
         border: none;
         outline: none;
         flex-grow: 1;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         font-weight: 500;
         color: #222222;
         background: transparent;
@@ -52,7 +60,7 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: background-color 0.2s ease;
         margin-left: 10px;
     }
 
@@ -60,20 +68,68 @@
         background-color: #e31c5f;
     }
 
-    /* Professional clean layout */
+    /* --- Airbnb Fluid Carousel Track --- */
+    .slider-section {
+        margin-bottom: 56px;
+    }
+
+    .section-heading {
+        font-size: 1.375rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #222222;
+        margin-bottom: 18px;
+    }
+
+    .airbnb-slider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px; 
+        margin-right: -12px;
+        margin-left: -12px;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    /* Hiding browser scrollbars */
+    .airbnb-slider::-webkit-scrollbar {
+        display: none;
+    }
+    .airbnb-slider {
+        -ms-overflow-style: none;  
+        scrollbar-width: none;  
+    }
+
+    /* Perfect flex dimensions for column sliders */
+    .airbnb-slider .slider-col {
+        flex: 0 0 auto;
+        width: 82%;
+    }
+
+    /* Screen breaks matching exact viewport ratios */
+    @media (min-width: 550px) { .airbnb-slider .slider-col { width: 46%; } }
+    @media (min-width: 744px) { .airbnb-slider .slider-col { width: 31.33%; } }
+    @media (min-width: 950px) { .airbnb-slider .slider-col { width: 23.5%; } }
+    @media (min-width: 1128px) { .airbnb-slider .slider-col { width: 15.66%; } }
+
+    /* --- Standard Airbnb Property Card Typography --- */
     .listing-card {
         border: none !important;
-        transition: opacity 0.2s;
         text-decoration: none !important;
         color: inherit !important;
+        background: transparent !important;
     }
 
     .img-container {
         position: relative;
         width: 100%;
-        padding-top: 100%;
+        padding-top: 95%; /* 4:3 layout rectangle orientation ratio */
         overflow: hidden;
         border-radius: 12px;
+        background-color: #f7f7f7;
     }
 
     .listing-img {
@@ -85,22 +141,21 @@
         object-fit: cover;
     }
 
-    /* Guest Favorite Badge */
+    /* Pure Guest Favorite badge detailing */
     .badge-guest-favorite {
         position: absolute;
         top: 12px;
         left: 12px;
-        background: white;
-        color: black;
-        padding: 4px 10px;
-        border-radius: 15px;
+        background: #ffffff;
+        color: #222222;
+        padding: 4px 12px;
+        border-radius: 16px;
         font-size: 0.75rem;
         font-weight: 600;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         z-index: 2;
     }
 
-    /* Wishlist Heart Icon */
     .wishlist-btn {
         position: absolute;
         top: 12px;
@@ -110,34 +165,31 @@
         cursor: pointer;
         z-index: 2;
         padding: 0;
-        transition: transform 0.2s ease;
-    }
-
-    .wishlist-btn:hover {
-        transform: scale(1.1);
     }
 
     .wishlist-icon {
         height: 24px;
         width: 24px;
         fill: rgba(0, 0, 0, 0.5);
-        /* Semi-transparent black */
-        stroke: white;
+        stroke: #ffffff;
         stroke-width: 2;
         overflow: visible;
     }
 
-    /* Optional: Class for when it's "liked" */
     .wishlist-btn.active .wishlist-icon {
         fill: #ff385c;
         stroke: #ff385c;
     }
 
+    .card-body-details {
+        padding-top: 10px;
+    }
+
     .listing-title {
-        font-size: 0.95rem;
+        font-size: 0.935rem;
         font-weight: 600;
-        margin-top: 8px;
-        margin-bottom: 0;
+        color: #222222;
+        margin: 0 0 2px 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -145,76 +197,247 @@
 
     .listing-location {
         color: #717171;
-        font-size: 0.9rem;
-        margin-bottom: 2px;
+        font-size: 0.875rem;
+        line-height: 1.2;
+        margin-bottom: 4px;
     }
 
     .listing-price {
-        font-size: 0.95rem;
+        font-size: 0.875rem;
+        color: #222222;
         margin-top: 4px;
+    }
+    
+    .listing-price strong {
+        font-weight: 600;
+    }
+
+    /* --- Clean Fanned Photo Stack View More Card --- */
+    .view-more-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        text-decoration: none !important;
+        color: inherit !important;
+    }
+
+    /* The outer container mimics a clean white structural container card with big rounded edges */
+    .stack-card-container {
+        position: relative;
+        width: 100%;
+        padding-top: 95%; 
+        border-radius: 24px;
+        background-color: #ffffff;
+        border: 1px solid #ebebeb;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .view-more-card:hover .stack-card-container {
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+
+    /* Context window holding the absolute positioned thumbnails */
+    .stack-inner-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* General style applied to all stacked polaroid miniatures */
+    .stack-thumb {
+        position: absolute;
+        width: 44%;
+        height: 44%;
+        object-fit: cover;
+        border-radius: 14px;
+        border: 3px solid #ffffff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        transition: transform 0.2s ease;
+    }
+
+    /* Image 1: Top-most left background */
+    .thumb-back {
+        top: 16%;
+        left: 24%;
+        transform: rotate(-6deg);
+        z-index: 1;
+    }
+
+    /* Image 2: Mid-layer right */
+    .thumb-mid {
+        top: 22%;
+        right: 18%;
+        transform: rotate(8deg);
+        z-index: 2;
+    }
+
+    /* Image 3: Hero prominent front-left */
+    .thumb-front {
+        bottom: 16%;
+        left: 16%;
+        transform: rotate(-4deg);
+        width: 48%; /* Marginally bigger to look layered closer to the screen */
+        height: 48%;
+        z-index: 3;
+    }
+
+    /* Micro-animation interaction when hovering anywhere on the card */
+    .view-more-card:hover .thumb-back { transform: rotate(-10deg) translate(-2px, -2px); }
+    .view-more-card:hover .thumb-mid { transform: rotate(12deg) translate(2px, -2px); }
+    .view-more-card:hover .thumb-front { transform: rotate(-1deg) scale(1.02); }
+
+    /* Text Title formatting under the graphics pile */
+    .stack-footer-text {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #222222;
+        text-align: center;
+        margin-top: 14px;
+        letter-spacing: -0.01em;
     }
 </style>
 
 <!-- Enhanced Search Section -->
 <div class="search-outer-container">
     <form action="" method="get" class="search-form">
-        <input type="text" name="q" class="search-input" placeholder="Search by title, city or location"
-            value="{{ request.GET.q }}">
+        <input type="text" name="q" class="search-input" placeholder="Search by title, city or location" value="{{ request.GET.q }}">
         <button type="submit" class="search-button">
-            <svg viewBox="0 0 32 32"
-                style="display:block;fill:none;height:12px;width:12px;stroke:currentColor;stroke-width:5.333333333333333;overflow:visible"
-                aria-hidden="true" role="presentation" focusable="false">
+            <svg viewBox="0 0 32 32" style="display:block;fill:none;height:12px;width:12px;stroke:currentColor;stroke-width:5.33;overflow:visible" aria-hidden="true" role="presentation" focusable="false">
                 <g fill="none">
-                    <path
-                        d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9">
-                    </path>
+                    <path d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 24zm8-3 9 9"></path>
                 </g>
             </svg>
         </button>
     </form>
 </div>
 
-<!-- Listings Grid -->
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
-    {% for listing in listings %}
-    <div class="col">
-        <div class="card h-100 listing-card">
-            <div class="img-container">
-                <a href="{% url 'list-detail' listing.pk %}">
-                    {% if listing.images.first.image.url %}
-                    <img src="{{ listing.images.first.image.url }}" class="listing-img" alt="{{ listing.title }}">
-                    {% endif %}
-                </a>
-
-                <span class="badge-guest-favorite">Guest favorite</span>
-
-                <!-- Wishlist Button -->
-                <!-- Wishlist Button -->
-                <form method="post" action="{% url 'add-to-wishlist' listing.id %}">
-                    {% csrf_token %}
-
-                    <button type="submit" class="wishlist-btn" aria-label="Add to wishlist">
-                        <svg class="wishlist-icon" viewBox="0 0 32 32">
-                            <path
-                                d="M16 28c7-4.73 14-10 14-17a6.91 6.91 0 0 0-7-7c-3.75 0-6.26 2.73-7 3.73-1.01-1.31-3.54-3.73-7-3.73a6.91 6.91 0 0 0-7 7c0 7 7 12.27 14 17z">
-                            </path>
-                        </svg>
-                    </button>
-                </form>
-
-            </div>
-
-            <a href="{% url 'list-detail' listing.pk %}" style="text-decoration: none; color: inherit;">
-                <div class="card-body p-0">
-                    <h5 class="listing-title">{{ listing.title }}</h5>
-                    <p class="listing-location">{{ listing.city }}, {{ listing.country }}</p>
-                    <p class="listing-price">
-                        <strong>${{ listing.price_per_night }}</strong> <span class="text-muted">night</span>
-                    </p>
+<!-- Core Presentation Engine -->
+{% if is_search %}
+    <!-- Layout A: Search Grid Matrix View -->
+    <h2 class="section-heading">Search Results</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-4">
+        {% for listing in listings %}
+            <div class="col">
+                <div class="card h-100 listing-card">
+                    <div class="img-container">
+                        <a href="{% url 'list-detail' listing.pk %}">
+                            {% if listing.images.first.image.url %}
+                            <img src="{{ listing.images.first.image.url }}" class="listing-img" alt="{{ listing.title }}">
+                            {% endif %}
+                        </a>
+                        <span class="badge-guest-favorite">Guest favorite</span>
+                        <form method="post" action="{% url 'add-to-wishlist' listing.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="wishlist-btn" aria-label="Add to wishlist">
+                                <svg class="wishlist-icon" viewBox="0 0 32 32">
+                                    <path d="M16 28c7-4.73 14-10 14-17a6.91 6.91 0 0 0-7-7c-3.75 0-6.26 2.73-7 3.73-1.01-1.31-3.54-3.73-7-3.73a6.91 6.91 0 0 0-7 7c0 7 7 12.27 14 17z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <a href="{% url 'list-detail' listing.pk %}" style="text-decoration: none; color: inherit;">
+                        <div class="card-body-details">
+                            <h5 class="listing-title">{{ listing.title }}</h5>
+                            <p class="listing-location">{{ listing.city }}, {{ listing.country }}</p>
+                            <p class="listing-price">
+                                <strong>${{ listing.price_per_night }}</strong> <span class="text-muted">night</span>
+                            </p>
+                        </div>
+                    </a>
                 </div>
-            </a>
-        </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p class="text-muted px-1" style="font-size: 0.95rem;">No listings match your search criteria.</p>
+            </div>
+        {% endfor %}
     </div>
+{% else %}
+    <!-- Layout B: Standard Home Feed Grouped Sliders -->
+    {% for group in grouped_listings %}
+        <div class="slider-section">
+            <h2 class="section-heading">Popular places in {{ group.city }}</h2>
+            
+            <div class="airbnb-slider">
+                {% for listing in group.listings %}
+                    
+                    {% if forloop.counter <= 10 %}
+                        <!-- Regular Listing Cards (Items 1 to 10) -->
+                        <div class="slider-col px-2">
+                            <div class="card h-100 listing-card">
+                                <div class="img-container">
+                                    <a href="{% url 'list-detail' listing.pk %}">
+                                        {% if listing.images.first.image.url %}
+                                        <img src="{{ listing.images.first.image.url }}" class="listing-img" alt="{{ listing.title }}">
+                                        {% endif %}
+                                    </a>
+                                    <span class="badge-guest-favorite">Guest favorite</span>
+                                    <form method="post" action="{% url 'add-to-wishlist' listing.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="wishlist-btn" aria-label="Add to wishlist">
+                                            <svg class="wishlist-icon" viewBox="0 0 32 32">
+                                                <path d="M16 28c7-4.73 14-10 14-17a6.91 6.91 0 0 0-7-7c-3.75 0-6.26 2.73-7 3.73-1.01-1.31-3.54-3.73-7-3.73a6.91 6.91 0 0 0-7 7c0 7 7 12.27 14 17z"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                                <a href="{% url 'list-detail' listing.pk %}" style="text-decoration: none; color: inherit;">
+                                    <div class="card-body-details">
+                                        <h5 class="listing-title">{{ listing.title }}</h5>
+                                        <p class="listing-location">{{ listing.city }}, {{ listing.country }}</p>
+                                        <p class="listing-price">
+                                            <strong>${{ listing.price_per_night }}</strong> <span class="text-muted">night</span>
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if forloop.counter == 11 %}
+                        <!-- The Interactive Polaroid Fanned Stack View More Card -->
+                        <div class="slider-col px-2">
+                            <a href="?q={{ group.city }}" class="view-more-card">
+                                <div class="stack-card-container">
+                                    <div class="stack-inner-wrapper">
+                                        
+                                        <!-- Pull items 13, 12, and 11 to populate background to foreground stack -->
+                                        {% for preview in group.listings %}
+                                            {% if forloop.counter == 13 %}
+                                                {% if preview.images.first.image.url %}
+                                                    <img src="{{ preview.images.first.image.url }}" class="stack-thumb thumb-back" alt="Stack Back">
+                                                {% endif %}
+                                            {% elif forloop.counter == 12 %}
+                                                {% if preview.images.first.image.url %}
+                                                    <img src="{{ preview.images.first.image.url }}" class="stack-thumb thumb-mid" alt="Stack Mid">
+                                                {% endif %}
+                                            {% elif forloop.counter == 11 %}
+                                                {% if preview.images.first.image.url %}
+                                                    <img src="{{ preview.images.first.image.url }}" class="stack-thumb thumb-front" alt="Stack Front">
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                                <div class="stack-footer-text">
+                                    See all
+                                </div>
+                            </a>
+                        </div>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
     {% endfor %}
-</div>
+{% endif %}
+
 {% endblock content %}

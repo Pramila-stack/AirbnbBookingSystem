@@ -10,22 +10,66 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 
 # Create your views here.
+# class HomeView(ListView):
+#     model = Listing
+#     template_name = "home.html"
+#     context_object_name = "listings"
+
+#     def get_queryset(self):
+#         queryset = Listing.objects.prefetch_related("images").all().order_by("-created_at")
+
+#         query = self.request.GET.get("q")
+
+#         if query:
+#             queryset = queryset.filter(
+#                 Q(title__icontains=query)|Q(city__icontains=query)|Q(country__icontains=query))
+
+#         return queryset
+
+
+from django.views.generic import ListView
+from .models import Listing  # Replace with your actual model import
+
 class HomeView(ListView):
     model = Listing
-    template_name = "home.html"
-    context_object_name = "listings"
+    template_name = 'home.html'
+    context_object_name = 'listings' 
 
-    def get_queryset(self):
-        queryset = Listing.objects.prefetch_related("images").all().order_by("-created_at")
-
-        query = self.request.GET.get("q")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # FIXED: Removed the typo line entirely. Just pull 'q' straight from GET parameters.
+        query = self.request.GET.get('q')
 
         if query:
-            queryset = queryset.filter(
-                Q(title__icontains=query)|Q(city__icontains=query)|Q(country__icontains=query))
+            # Layout A: Search mode
+            context['is_search'] = True
+        else:
+            # Layout B: Grouped Home Feed Slider mode
+            context['is_search'] = False
+            
+            cities = Listing.objects.values_list('city', flat=True).distinct()
+            
+            grouped_listings = []
+            for city in cities:
+                city_listings = Listing.objects.filter(city=city)
+                
+                if city_listings.exists():
+                    grouped_listings.append({
+                        'city': city,
+                        'listings': city_listings
+                    })
+            
+            context['grouped_listings'] = grouped_listings
 
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            return queryset.filter(city__icontains=query)
         return queryset
-    
 
 
 class ListDetailView(DetailView):
