@@ -6,7 +6,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 80vh;
+        min-height: 85vh;
         background-color: #f7f7f7;
     }
 
@@ -22,77 +22,152 @@
 
     .auth-header {
         text-align: center;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
+        color: #222222;
         padding-bottom: 16px;
         margin-bottom: 24px;
         border-bottom: 1px solid #ebebeb;
     }
 
-    .form-control {
-        padding: 12px;
-        border-radius: 8px;
+    .welcome-text {
+        font-size: 22px;
+        font-weight: 600;
+        color: #222222;
+        margin-bottom: 24px;
+    }
+
+    /* Stacked input framework for 4 fields */
+    .stacked-inputs {
         border: 1px solid #b0b0b0;
+        border-radius: 8px;
+        overflow: hidden;
         margin-bottom: 12px;
+    }
+
+    .stacked-inputs .field-wrapper {
+        position: relative;
+    }
+
+    .stacked-inputs .field-wrapper:not(:last-child) {
+        border-bottom: 1px solid #b0b0b0;
+    }
+
+    .stacked-inputs .form-control {
         width: 100%;
+        padding: 18px 12px;
+        border: none;
+        border-radius: 0;
+        font-size: 16px;
+        color: #222222;
+        background-color: transparent;
+        outline: none;
+    }
+
+    .stacked-inputs .form-control:focus {
+        background-color: #ffffff;
+        box-shadow: inset 0 0 0 2px #222222;
+        position: relative;
+        z-index: 10;
     }
 
     .btn-submit {
         width: 100%;
         padding: 14px;
-        background-color: #FF385C;
+        background-image: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
         border: none;
         color: white;
+        font-size: 16px;
         font-weight: 600;
         border-radius: 8px;
-        margin-top: 10px;
+        cursor: pointer;
+        margin-top: 16px;
+        transition: transform 0.1s ease;
     }
 
-    .error-list {
+    .btn-submit:active {
+        transform: scale(0.98);
+    }
+
+    .error-container {
+        background-color: #fff8f6;
+        border: 1px solid #c13511;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+
+    .field-error {
         color: #c13511;
-        font-size: 13px;
-        list-style: none;
-        padding: 0;
-        margin: 0 0 10px 0;
+        font-size: 12px;
+        margin-top: 4px;
+        margin-bottom: 12px;
+        padding-left: 4px;
+        display: block;
+    }
+
+    .legal-text {
+        font-size: 12px;
+        color: #717171;
+        line-height: 16px;
+        margin-top: 16px;
     }
 </style>
 
 <div class="auth-wrapper">
     <div class="auth-card">
         <div class="auth-header">Sign up</div>
+        
+        <div class="welcome-text">Create your account</div>
+
+        {% if form.non_field_errors %}
+            <div class="error-container">
+                {% for error in form.non_field_errors %}
+                    <span style="color: #c13511; font-size: 14px;">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <form action="" method="POST">
             {% csrf_token %}
 
-            {% if form.non_field_errors %}
-                <div class="error-list text-center">{{ form.non_field_errors }}</div>
+            <div class="stacked-inputs">
+                <div class="field-wrapper">
+                    <input type="text" name="username" class="form-control" placeholder="Username" value="{{ form.username.value|default_if_none:'' }}" required>
+                </div>
+                
+                <div class="field-wrapper">
+                    <input type="email" name="email" class="form-control" placeholder="Email" value="{{ form.email.value|default_if_none:'' }}" required>
+                </div>
+
+                <div class="field-wrapper">
+                    <input type="password" name="password1" class="form-control" placeholder="Create Password" required>
+                </div>
+
+                <div class="field-wrapper">
+                    <input type="password" name="password2" class="form-control" placeholder="Confirm Password" required>
+                </div>
+            </div>
+
+            {# Granular field validation feedback positioned below the component stack #}
+            {% if form.username.errors or form.email.errors or form.password1.errors or form.password2.errors %}
+                <div style="margin-bottom: 12px;">
+                    {% if form.username.errors %}<span class="field-error"><strong>Username:</strong> {% for error in form.username.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                    {% if form.email.errors %}<span class="field-error"><strong>Email:</strong> {% for error in form.email.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                    {% if form.password1.errors %}<span class="field-error"><strong>Password:</strong> {% for error in form.password1.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                    {% if form.password2.errors %}<span class="field-error"><strong>Confirmation:</strong> {% for error in form.password2.errors %}{{ error }}{% endfor %}</span>{% endif %}
+                </div>
             {% endif %}
 
-            <div class="field-container">
-                {% if form.username.errors %}<div class="error-list">{{ form.username.errors }}</div>{% endif %}
-                <input type="text" name="username" class="form-control" placeholder="Username" value="{{ form.username.value|default_if_none:'' }}">
-            </div>
-
-            <div class="field-container">
-                {% if form.email.errors %}<div class="error-list">{{ form.email.errors }}</div>{% endif %}
-                <input type="email" name="email" class="form-control" placeholder="Email" value="{{ form.email.value|default_if_none:'' }}">
-            </div>
-
-            <div class="field-container">
-                {% if form.password1.errors %}<div class="error-list">{{ form.password1.errors }}</div>{% endif %}
-                <input type="password" name="password1" class="form-control" placeholder="Create Password">
-            </div>
-
-            <div class="field-container">
-                {% if form.password2.errors %}<div class="error-list">{{ form.password2.errors }}</div>{% endif %}
-                <input type="password" name="password2" class="form-control" placeholder="Confirm Password">
-            </div>
+            <p class="legal-text">
+                We’ll call or text you to confirm your number and email. Standard message and data rates apply.
+            </p>
 
             <button type="submit" class="btn-submit">Agree and continue</button>
         </form>
 
-        <p class="text-center mt-3" style="font-size: 14px;">
-            Already have an account? <a href="{% url 'login' %}" style="color: #222; font-weight: 600;">Log in</a>
+        <p class="text-center mt-3" style="font-size: 14px; color: #222222; margin-top: 24px;">
+            Already have an account? <a href="{% url 'login' %}" style="color: #222; font-weight: 600; text-decoration: underline;">Log in</a>
         </p>
     </div>
 </div>

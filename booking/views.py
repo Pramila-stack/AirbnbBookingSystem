@@ -30,6 +30,9 @@ from django.db.models import Q
 from django.views.generic import ListView
 from .models import Listing  # Replace with your actual model import
 
+from django.views.generic import ListView
+from .models import Listing
+
 class HomeView(ListView):
     model = Listing
     template_name = 'home.html'
@@ -37,8 +40,6 @@ class HomeView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # FIXED: Removed the typo line entirely. Just pull 'q' straight from GET parameters.
         query = self.request.GET.get('q')
 
         if query:
@@ -48,6 +49,24 @@ class HomeView(ListView):
             # Layout B: Grouped Home Feed Slider mode
             context['is_search'] = False
             
+            # --- START: Recently Viewed Feature ---
+            # Expecting a list of IDs stored in sessions, e.g., [3, 7, 1]
+            recently_viewed_ids = self.request.session.get('recently_viewed', [])
+            
+            if recently_viewed_ids:
+                # Fetch objects efficiently in a single query matching those IDs
+                recent_listings_dict = Listing.objects.in_bulk(recently_viewed_ids)
+                
+                # Re-order objects to mirror the user's exact chronological viewing history
+                # Filters out None values safely in case a listing was deleted in the backend
+                recently_viewed_listings = [
+                    recent_listings_dict[lk] 
+                    for lk in recently_viewed_ids 
+                    if lk in recent_listings_dict
+                ]
+                context['recently_viewed'] = recently_viewed_listings
+            # --- END: Recently Viewed Feature ---
+
             cities = Listing.objects.values_list('city', flat=True).distinct()
             
             grouped_listings = []
@@ -72,10 +91,38 @@ class HomeView(ListView):
         return queryset
 
 
+from django.views.generic import DetailView
+from .models import Listing
+
 class ListDetailView(DetailView):
     model = Listing
     template_name = "list_detail.html"
     context_object_name = "listing"
+
+    def get_object(self, queryset=None):
+        # Fetch the target listing object using the parent class logic
+        obj = super().get_object(queryset)
+        
+        # --- TRACK USER HISTORY VIA SESSION ---
+        # Retrieve or initialize the history sequence from tracking memory
+        history = self.request.session.get('recently_viewed', [])
+        
+        # Ensure the listing ID is a primitive type (int) matching the session structure
+        listing_id = obj.id
+        
+        # If the user has viewed this listing before, pluck it out of its old index
+        # to ensure it moves all the way to the front without stacking duplicates
+        if listing_id in history:
+            history.remove(listing_id)
+            
+        # Insert at position 0 to signal it is the absolute newest viewed property
+        history.insert(0, listing_id)
+        
+        # Slice the history array to keep only the 6 most recent unique cards
+        # prevents cookies from getting too bloated
+        self.request.session['recently_viewed'] = history[:6]
+        
+        return obj
 
 
 class ListingGalleryView(DetailView):
@@ -168,7 +215,7 @@ class SignupView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request,user)
-        return super().form_valid(form)
+        return redirect(self.success_url)
 
 
 from django.views.generic import CreateView

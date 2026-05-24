@@ -1,115 +1,268 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    /* Premium UI Color Tokens & Glassmorphism Design System */
+    :root {
+        --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        --input-focus-glow: rgba(124, 58, 237, 0.15);
+        --bg-card: #ffffff;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --border-color: #e5e7eb;
+    }
 
-<div class="container mt-5">
+    body {
+        background-color: #f9fafb;
+    }
 
-    <h1 class="mb-4">Become a Host</h1>
+    /* Outer Glassmorphism Form container */
+    .premium-form-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+        padding: 3rem;
+        max-width: 850px;
+        margin: 3rem auto;
+    }
 
-    <form method="POST" enctype="multipart/form-data">
+    /* Typography Upgrades */
+    .form-header-title {
+        font-weight: 800;
+        background: var(--brand-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.03em;
+    }
 
-        {% csrf_token %}
+    .section-divider-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-        <!-- Listing Information -->
+    /* Clean Info Group Grid styling */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
 
-        <div class="mb-3">
-            <label class="form-label">Title</label>
-            {{ form.title }}
+    .full-width {
+        grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+        .info-grid { grid-template-columns: 1fr; }
+        .full-width { grid-column: span 1; }
+        .premium-form-card { padding: 1.5rem; }
+    }
+
+    /* Beautiful Input Treatments */
+    .modern-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .modern-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+    }
+
+    .modern-input {
+        border: 2px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.95rem !important;
+        transition: all 0.2s ease-in-out !important;
+        color: var(--text-main) !important;
+        background-color: #fff !important;
+    }
+
+    .modern-input:focus {
+        border-color: #7c3aed !important;
+        box-shadow: 0 0 0 4px var(--input-focus-glow) !important;
+        outline: none !important;
+    }
+
+    /* Custom Upload Box styling for Multiple Files */
+    .upload-zone-wrapper {
+        background: #fdfcff;
+        border: 2px dashed #c0b6f2;
+        border-radius: 16px;
+        padding: 1.75rem;
+        text-align: center;
+        transition: all 0.2s ease;
+        margin-bottom: 2rem;
+    }
+
+    .upload-zone-wrapper:hover {
+        border-color: #7c3aed;
+        background: #f5f3ff;
+    }
+
+    /* Target the generated Django file input element */
+    .form-control-file-custom {
+        width: 100%;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
+    .form-control-file-custom::-webkit-file-upload-button {
+        background: var(--brand-gradient);
+        border: none;
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-right: 1rem;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .form-control-file-custom::-webkit-file-upload-button:hover {
+        opacity: 0.9;
+    }
+
+    /* Premium Submission CTA Button */
+    .btn-submit-premium {
+        background: var(--brand-gradient);
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 1rem 2.5rem;
+        border-radius: 14px;
+        width: 100%;
+        margin-top: 1.5rem;
+        box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-submit-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 25px rgba(124, 58, 237, 0.3);
+        color: #fff;
+    }
+
+    .btn-submit-premium:active {
+        transform: translateY(1px);
+    }
+</style>
+
+<div class="container">
+    <div class="premium-form-card">
+        
+        <!-- Header Text -->
+        <div class="text-center mb-5">
+            <h1 class="form-header-title mb-2">Become a Host</h1>
+            <p class="text-muted">Fill out the details below to list your beautiful place on our platform.</p>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Description</label>
-            {{ form.description }}
-        </div>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <div class="mb-3">
-            <label class="form-label">Category</label>
-            {{ form.category }}
-        </div>
+            <!-- SECTION 1: Listing Information Grid -->
+            <h4 class="section-divider-title">
+                <span>🏠</span> Core Listing Details
+            </h4>
+            
+            <div class="info-grid mb-4">
+                <div class="modern-group full-width">
+                    <label class="modern-label">Title</label>
+                    {{ form.title }}
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">City</label>
-            {{ form.city }}
-        </div>
+                <div class="modern-group full-width">
+                    <label class="modern-label">Description</label>
+                    {{ form.description }}
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Country</label>
-            {{ form.country }}
-        </div>
+                <div class="modern-group">
+                    <label class="modern-label">Category</label>
+                    {{ form.category }}
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Price Per Night</label>
-            {{ form.price_per_night }}
-        </div>
+                <div class="modern-group">
+                    <label class="modern-label">Price Per Night ($)</label>
+                    {{ form.price_per_night }}
+                </div>
 
-        <hr>
+                <div class="modern-group">
+                    <label class="modern-label">City</label>
+                    {{ form.city }}
+                </div>
 
-        <!-- Living Room Images -->
+                <div class="modern-group">
+                    <label class="modern-label">Country</label>
+                    {{ form.country }}
+                </div>
+            </div>
 
-        <div class="mb-4">
-            <h4>Living Room Images</h4>
+            <hr style="border-top: 1px dashed var(--border-color); margin: 2.5rem 0;">
 
-            {{ form.livingroom_images }}
+            <!-- SECTION 2: Media Management -->
+            <h4 class="section-divider-title mb-4">
+                <span>📸</span> Property Media Galleries
+            </h4>
 
-            <small class="text-muted d-block mt-2">
-                Hold Ctrl (Windows) or Cmd (Mac) to select multiple living room photos.
-            </small>
-        </div>
+            <!-- Living Room Images -->
+            <div class="upload-zone-wrapper">
+                <label class="modern-label d-block text-start">Living Room Images</label>
+                {{ form.livingroom_images }}
+                <small class="text-muted d-block mt-2 text-start">
+                    💡 Tip: Hold <b>Ctrl / ⌘ Cmd</b> to select multiple living room photos.
+                </small>
+            </div>
 
-        <!-- Kitchen Images -->
+            <!-- Kitchen Images -->
+            <div class="upload-zone-wrapper">
+                <label class="modern-label d-block text-start">Kitchen Images</label>
+                {{ form.kitchen_images }}
+                <small class="text-muted d-block mt-2 text-start">
+                    💡 Tip: Hold <b>Ctrl / ⌘ Cmd</b> to select multiple kitchen photos.
+                </small>
+            </div>
 
-        <div class="mb-4">
-            <h4>Kitchen Images</h4>
+            <!-- Bedroom Images -->
+            <div class="upload-zone-wrapper">
+                <label class="modern-label d-block text-start">Bedroom Images</label>
+                {{ form.bedroom_images }}
+                <small class="text-muted d-block mt-2 text-start">
+                    💡 Tip: Hold <b>Ctrl / ⌘ Cmd</b> to select multiple bedroom photos.
+                </small>
+            </div>
 
-            {{ form.kitchen_images }}
+            <!-- Bathroom Images -->
+            <div class="upload-zone-wrapper">
+                <label class="modern-label d-block text-start">Bathroom Images</label>
+                {{ form.bathroom_images }}
+                <small class="text-muted d-block mt-2 text-start">
+                    💡 Tip: Hold <b>Ctrl / ⌘ Cmd</b> to select multiple bathroom photos.
+                </small>
+            </div>
 
-            <small class="text-muted d-block mt-2">
-                Hold Ctrl (Windows) or Cmd (Mac) to select multiple kitchen photos.
-            </small>
-        </div>
+            <!-- Exterior Images -->
+            <div class="upload-zone-wrapper">
+                <label class="modern-label d-block text-start">Exterior Images</label>
+                {{ form.exterior_images }}
+                <small class="text-muted d-block mt-2 text-start">
+                    💡 Tip: Hold <b>Ctrl / ⌘ Cmd</b> to select multiple exterior photos.
+                </small>
+            </div>
 
-        <!-- Bedroom Images -->
+            <!-- Submit Action -->
+            <button type="submit" class="btn btn-submit-premium">
+                Publish Listing Live
+            </button>
 
-        <div class="mb-4">
-            <h4>Bedroom Images</h4>
-
-            {{ form.bedroom_images }}
-
-            <small class="text-muted d-block mt-2">
-                Hold Ctrl (Windows) or Cmd (Mac) to select multiple bedroom photos.
-            </small>
-        </div>
-
-        <!-- Bathroom Images -->
-
-        <div class="mb-4">
-            <h4>Bathroom Images</h4>
-
-            {{ form.bathroom_images }}
-
-            <small class="text-muted d-block mt-2">
-                Hold Ctrl (Windows) or Cmd (Mac) to select multiple bathroom photos.
-            </small>
-        </div>
-
-        <!-- Exterior Images -->
-
-        <div class="mb-4">
-            <h4>Exterior Images</h4>
-
-            {{ form.exterior_images }}
-
-            <small class="text-muted d-block mt-2">
-                Hold Ctrl (Windows) or Cmd (Mac) to select multiple exterior photos.
-            </small>
-        </div>
-
-        <button type="submit" class="btn btn-primary">
-            Create Listing
-        </button>
-
-    </form>
-
+        </form>
+    </div>
 </div>
-
 {% endblock %}

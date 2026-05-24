@@ -1,18 +1,286 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-    <h1>Photos of {{ listing.title }}</h1>
-    <hr>
+<style>
+    /* -------------------------------------------------------------------------- */
+    /* ENTERPRISE REAL ESTATE GALLERY DESIGN SYSTEM                               */
+    /* -------------------------------------------------------------------------- */
+    
+    :root {
+        /* Fluid Type & Space Scale (Locks proportions perfectly regardless of viewport) */
+        --font-serif: 'Playfair Display', 'Didot', 'Georgia', serif;
+        --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        
+        /* Strict Structural Token Palette */
+        --bg-canvas: #ffffff;
+        --bg-surface: #f8fafc;
+        --bg-surface-elevated: #ffffff;
+        --border-muted: #e2e8f0;
+        --border-active: #0f172a;
+        
+        --text-contrast: #0f172a;
+        --text-muted: #64748b;
+        --text-subtle: #94a3b8;
+        
+        /* Interactive Engine Values */
+        --interactive-primary: #1e293b;
+        --interactive-hover: #0f172a;
+        --accent-indicator: #b45309; 
+        
+        --radius-sm: 4px;
+        --radius-md: 6px;
+        
+        /* Physics-Based Motion System */
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        --anim-speed-fast: 0.2s;
+        --anim-speed-slow: 0.7s;
+    }
 
-    <!-- 1. NAVIGATION ROW: Clickable room names -->
-    <div class="row mb-5 text-center">
+    /* System Preference Dark Mode Mapping */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg-canvas: #090d16;
+            --bg-surface: #111827;
+            --bg-surface-elevated: #1f2937;
+            --border-muted: #1f2937;
+            --border-active: #f3f4f6;
+            
+            --text-contrast: #f9fafb;
+            --text-muted: #9ca3af;
+            --text-subtle: #6b7280;
+            
+            --interactive-primary: #f3f4f6;
+            --interactive-hover: #ffffff;
+            --accent-indicator: #fbbf24;
+        }
+    }
+
+    /* Core Document Geometry resets */
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 110px; /* Precise offset match for sticky category tracking layout */
+        background-color: var(--bg-canvas);
+    }
+    
+    body {
+        color: var(--text-muted);
+        background-color: var(--bg-canvas);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* UI COMPONENTS & LAYOUT ENGINES                                             */
+    /* -------------------------------------------------------------------------- */
+
+    /* Elegant Action Back Control */
+    .btn-custom-back {
+        display: inline-flex;
+        align-items: center;
+        font-family: var(--font-sans);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.65rem 1.4rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-muted) !important;
+        background: var(--bg-canvas) !important;
+        color: var(--text-contrast) !important;
+        transition: transform var(--anim-speed-fast) var(--ease-out-expo), 
+                    background-color var(--anim-speed-fast) ease, 
+                    border-color var(--anim-speed-fast) ease;
+    }
+    .btn-custom-back:hover {
+        background: var(--interactive-primary) !important;
+        border-color: var(--interactive-primary) !important;
+        color: var(--bg-canvas) !important;
+        transform: translateX(-4px);
+    }
+
+    /* Editorial Headline Architecture */
+    .gallery-main-title {
+        font-family: var(--font-serif);
+        font-weight: 400;
+        color: var(--text-contrast);
+        letter-spacing: -0.015em;
+        font-size: clamp(1.75rem, 4vw, 2.75rem); /* Dynamic responsive text scale without breaking points */
+        line-height: 1.15;
+    }
+
+    /* 
+       Sticky Section Segmented Control Array
+       Using container queries and blur techniques to cleanly isolate the interface over scrolling sections.
+    */
+    .nav-grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 4rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: 1.25rem 0;
+        background: radial-gradient(circle at top, transparent 2px, var(--bg-canvas) 2px);
+        background-size: 100% 100%;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-muted);
+    }
+
+    /* Structural Anchor Module Elements */
+    .room-nav-card {
+        background: var(--bg-surface) !important;
+        border: 1px solid var(--border-muted) !important;
+        border-radius: var(--radius-sm) !important;
+        transition: var(--anim-speed-fast) ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 52px;
+        padding: 0 1.25rem !important;
+        box-shadow: none !important;
+    }
+    .room-nav-card:hover {
+        background: var(--bg-surface-elevated) !important;
+        border-color: var(--border-active) !important;
+        transform: translateY(-1px);
+    }
+    .room-nav-card:active {
+        transform: translateY(1px);
+    }
+    .room-nav-card:hover .room-nav-text {
+        color: var(--text-contrast) !important;
+    }
+    .room-nav-text {
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color var(--anim-speed-fast) ease;
+    }
+
+    /* Real Estate Layout Segment Separators */
+    .room-section-title {
+        font-family: var(--font-serif);
+        font-weight: 400;
+        color: var(--text-contrast) !important; /* Strips standard aggressive Bootstrap text-primary colors */
+        letter-spacing: 0.01em;
+        font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+        border-bottom: 1px solid var(--border-muted);
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    /* 
+       Advanced Object Grid Wrappers
+       Forces standard bounding bounds layout ratios to eliminate browser engine container shifts.
+    */
+    .gallery-img-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 10; /* Clean horizontal architectural presentation aspect ratio */
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-muted) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01) !important;
+        transition: border-color var(--anim-speed-fast) ease, 
+                    box-shadow var(--anim-speed-slow) var(--ease-out-expo), 
+                    transform var(--anim-speed-slow) var(--ease-out-expo);
+        will-change: transform; /* Hinting engine optimizing pass rules */
+    }
+    .gallery-img-wrapper img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        transition: transform var(--anim-speed-slow) var(--ease-out-expo);
+    }
+    
+    /* Advanced Grid Image State Hover Transformations */
+    .gallery-img-wrapper:hover {
+        border-color: var(--border-active) !important;
+        transform: translateY(-4px);
+        box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08) !important;
+    }
+    .gallery-img-wrapper:hover img {
+        transform: scale(1.03); /* Subtle, ultra-clean lens zoom tracking stabilization */
+    }
+
+    /* Functional Utility Back-To-Top Control Layout Action */
+    .back-top-link {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.725rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-subtle) !important;
+        transition: var(--anim-speed-fast) ease;
+        padding: 0.5rem 0.85rem;
+        border-radius: var(--radius-sm);
+        border: 1px solid transparent;
+        margin-top: 0.5rem;
+    }
+    .back-top-link:hover {
+        color: var(--text-contrast) !important;
+        background-color: var(--bg-surface);
+        border-color: var(--border-muted);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* FLEXIBLE DISPLAY GRID COMPATIBILITY OVERRIDES                              */
+    /* -------------------------------------------------------------------------- */
+    @media (max-width: 992px) {
+        .nav-grid-container {
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            position: relative;
+            backdrop-filter: none;
+            padding: 0.5rem 0 1.5rem 0;
+        }
+        .gallery-img-wrapper {
+            aspect-ratio: 3 / 2; /* Adjust layout framing metrics cleanly onto smaller glass surfaces */
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .nav-grid-container {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+        .room-nav-card {
+            height: 44px;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <!-- Back Navigation Action -->
+    <a href="{% url 'list-detail' listing.pk %}" class="btn btn-outline-danger btn-custom-back mb-3">
+        ← Go back
+    </a>
+    
+    <h1 class="gallery-main-title">Photos of {{ listing.title }}</h1>
+    <hr class="mb-4 opacity-25" style="border-color: var(--border-muted);">
+
+    <!-- 1. NAVIGATION ROW: Upgraded using CSS Grid instead of raw flex columns -->
+    <div class="nav-grid-container text-center">
         {% regroup listing.images.all by get_room_type_display as room_list %}
         {% for room in room_list %}
-            <div class="col">
+            <div>
                 <a href="#{{ room.grouper|slugify }}" class="text-decoration-none fw-bold text-dark">
-                    <!-- Showing a small thumbnail or just the text -->
-                    <div class="p-3 border rounded bg-light">
-                        {{ room.grouper }}
+                    <div class="p-3 border rounded bg-light room-nav-card">
+                        <span class="room-nav-text">{{ room.grouper }}</span>
                     </div>
                 </a>
             </div>
@@ -21,16 +289,29 @@
 
     <!-- 2. GALLERY SECTIONS -->
     {% for room in room_list %}
-        <!-- We add an ID here that matches the link above -->
-        <h3 id="{{ room.grouper|slugify }}" class="mt-5 text-primary">{{ room.grouper }}</h3>
-        <div class="row">
-            {% for item in room.list %}
-                <div class="col-md-4 mb-4">
-                    <img src="{{ item.image.url }}" class="img-fluid rounded shadow-sm border">
-                </div>
-            {% endfor %}
+        <div class="mb-5">
+            <!-- Anchor ID Section Title -->
+            <h3 id="{{ room.grouper|slugify }}" class="mt-5 text-primary room-section-title">
+                {{ room.grouper }}
+            </h3>
+            
+            <div class="row">
+                {% for item in room.list %}
+                    <div class="col-md-4 mb-4">
+                        <!-- Upgraded wrap architecture to trap transform animations -->
+                        <div class="gallery-img-wrapper shadow-sm border">
+                            <img src="{{ item.image.url }}" class="img-fluid rounded" alt="{{ room.grouper }} view">
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <p class="mt-2">
+                <a href="#" class="text-muted small text-decoration-none back-top-link">
+                    ↑ Back to top
+                </a>
+            </p>
         </div>
-        <p><a href="#" class="text-muted small">↑ Back to top</a></p>
     {% endfor %}
 </div>
 {% endblock %}
